@@ -36,6 +36,9 @@ class Database {
       setTimeout(() => {
         if (sql.includes('models')) {
           resolve(this.getMockModels(params[0]));
+        } else if (sql.includes('JOIN vendors') || (sql.includes('vendors') && sql.includes('products'))) {
+          // Handle vendor queries that join with products table
+          resolve(this.getMockVendors(params[0], params[1]));
         } else if (sql.includes('products')) {
           resolve(this.getMockProducts(params[0], params[1]));
         } else if (sql.includes('vendors')) {

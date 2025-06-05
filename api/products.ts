@@ -31,7 +31,7 @@ export async function getVendorsByModel(modelId: number, category: string) {
       ORDER BY p.price ASC
     `;
     
-    const result = await database.query('vendors', [modelId, category]);
+    const result = await database.query(query, [modelId, category]);
     return result;
   } catch (error) {
     console.error('Error fetching vendors by model:', error);
