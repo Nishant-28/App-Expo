@@ -20,6 +20,7 @@ export default function OrderScreen() {
   const [orderStep, setOrderStep] = useState<number>(1)
   const [orderPlaced, setOrderPlaced] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
+  const [lastParamCategory, setLastParamCategory] = useState<string | null>(null)
 
   const {
     selectedCategory,
@@ -42,15 +43,21 @@ export default function OrderScreen() {
   } = useOrder()
 
   useEffect(() => {
-    if (params.category && ["Display", "Battery"].includes(params.category as string)) {
-      setSelectedCategory(params.category as "Display" | "Battery")
+    const categoryParam = params.category as string
+    if (categoryParam && 
+        ["Display", "Battery"].includes(categoryParam) && 
+        categoryParam !== lastParamCategory) {
+      const newCategory = categoryParam as "Display" | "Battery"
+      setSelectedCategory(newCategory)
       setOrderStep(2)
+      setLastParamCategory(categoryParam)
     }
-  }, [params])
+  }, [params, lastParamCategory, setSelectedCategory])
 
   const handleCategorySelect = (category: "Display" | "Battery") => {
     setSelectedCategory(category)
     setOrderStep(2)
+    setLastParamCategory(null)
   }
 
   const handleModelSelect = (model: any) => {
@@ -84,6 +91,7 @@ export default function OrderScreen() {
     resetOrder()
     setOrderPlaced(false)
     setOrderStep(1)
+    setLastParamCategory(null)
   }
 
   const renderProgressBar = () => {
@@ -125,7 +133,10 @@ export default function OrderScreen() {
       case 2:
         return (
           <View style={styles.stepContainer}>
-            <TouchableOpacity style={styles.backButton} onPress={() => setOrderStep(1)}>
+            <TouchableOpacity style={styles.backButton} onPress={() => {
+              setOrderStep(1)
+              setLastParamCategory(null)
+            }}>
               <ChevronLeft size={20} color={COLORS.primary} />
               <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
